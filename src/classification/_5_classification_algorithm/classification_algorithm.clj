@@ -75,3 +75,25 @@
                       )))
     []
     (range (- (get-row-size dataset) 1))))
+
+(defn best-question
+  "Returns best question that makes the biggest impact on distinguishing positive from negative groups"
+  [questions]
+  (reduce (fn [res x]
+            (if (and (> (count (:true x)) 0) (> (count (:false x)) 0) (> 1 (:gini x)))
+              x
+              res)) questions))
+(nth (analyze-by-questions (load-data/get-dataset "src/classification/_1_load_data/Carseats.csv")) 0)
+(map (fn [item] (:gini item)) (analyze-by-questions (load-data/get-dataset "src/classification/_1_load_data/Carseats.csv")))
+(best-question (analyze-by-questions (load-data/get-dataset "src/classification/_1_load_data/Carseats.csv")))
+(defn generate-tree
+  "Create classification tree from dataset"
+  [dataset]
+  (print (:gini dataset) "\n")
+  (if (or (<= (:gini dataset) 0.2) (== 1 (:gini dataset)))
+    dataset
+    {:question (:question dataset)
+     :gini (:gini dataset)
+     :column (:column dataset)
+     :true (let [right-data (best-question (analyze-by-questions (:true dataset)))] (if (empty? right-data) right-data (generate-tree right-data)))
+     :false (let [false-data (best-question (analyze-by-questions (:false dataset)))] (if (empty? false-data) false-data (generate-tree false-data)))}))
