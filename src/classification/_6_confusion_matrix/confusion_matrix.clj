@@ -11,7 +11,7 @@
     (if (>= value question)
       true
       false)
-    (if (== value question)
+    (if (identical? value question)
       true
       false)))
 
