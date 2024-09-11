@@ -97,3 +97,8 @@
      :column (:column dataset)
      :true (let [right-data (best-question (analyze-by-questions (:true dataset)))] (if (empty? right-data) right-data (generate-tree right-data)))
      :false (let [false-data (best-question (analyze-by-questions (:false dataset)))] (if (empty? false-data) false-data (generate-tree false-data)))}))
+
+(defn create-tree
+  "Creates tree from dataset"
+  [dataset]
+  (generate-tree (best-question (analyze-by-questions dataset))))
